@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>トレーディングダッシュボード</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            background-color: #343a40;
+        }
+        .sidebar a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: block;
+        }
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h4 class="text-center text-white">メニュー</h4>
+        <a href="#trade">トレード</a>
+        <a href="#orders">オーダー一覧</a>
+        <a href="#trades">トレード履歴</a>
+    </div>
+    <div class="content">
+        <section id="trade">
+            <h2>トレード</h2>
+            <form id="tradeForm">
+                <div class="mb-3">
+                    <label for="user" class="form-label">ユーザー名</label>
+                    <input type="text" class="form-control" id="user" name="user" required>
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label">数量</label>
+                    <input type="number" class="form-control" id="amount" name="amount" required>
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">価格</label>
+                    <input type="number" class="form-control" id="price" name="price" required>
+                </div>
+                <div class="mb-3">
+                    <label for="type" class="form-label">タイプ</label>
+                    <select class="form-select" id="type" name="type" required>
+                        <option value="buy">買い</option>
+                        <option value="sell">売り</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">注文を送信</button>
+            </form>
+        </section>
+
+        <section id="orders" class="mt-5">
+            <h2>オーダー一覧</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ユーザー</th>
+                        <th>タイプ</th>
+                        <th>数量</th>
+                        <th>価格</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTable">
+                    <!-- オーダーデータがここに挿入されます -->
+                </tbody>
+            </table>
+        </section>
+
+        <section id="trades" class="mt-5">
+            <h2>トレード履歴</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>買い注文ID</th>
+                        <th>買い手</th>
+                        <th>売り注文ID</th>
+                        <th>売り手</th>
+                        <th>数量</th>
+                        <th>価格</th>
+                        <th>作成日時</th>
+                    </tr>
+                </thead>
+                <tbody id="tradesTable">
+                    <!-- トレードデータがここに挿入されます -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // オーダー一覧の取得と表示
+            fetch('/api/orders')
+                .then(response => response.json())
+                .then(data => {
+                    const ordersTable = document.getElementById('ordersTable');
+                    data.orders.forEach(order => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${order.User}</td>
+                            <td>${order.Type}</td>
+                            <td>${order.Amount}</td>
+                            <td>${order.Price}</td>
+                        `;
+                        ordersTable.appendChild(row);
+                    });
+                });
+
+            // トレード履歴の取得と表示
+            fetch('/api/trades')
+                .then(response => response.json())
+                .then(data => {
+                    const tradesTable = document.getElementById('tradesTable');
+                    data.trades.forEach(trade => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${trade.BuyOrderID}</td>
+                            <td>${trade.Buyer}</td>
+                            <td>${trade.SellOrderID}</td>
+                            <td>${trade.Seller}</td>
+                            <td>${trade.Amount}</td>
+                            <td>${trade.Price}</td>
+                            <td>${new Date(trade.CreatedAt).toLocaleString()}</td>
+                        `;
+                        tradesTable.appendChild(row);
+                    });
+                });
+
+            // トレードフォームの送信処理
+            document.getElementById('tradeForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                const tradeData = {
+                    user: formData.get('user'),
+                    amount: parseFloat(formData.get('amount')),
+                    price: parseFloat(formData.get('price')),
+                    type: formData.get('type')
+                };
+
+                fetch('/api/trade', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(tradeData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        if (data.matched) {
+                            alert("マッチングが成立しました！");
+                        } else {
+                            alert("注文がオープンリストに追加されました。");
+                        }
+                        // フォームをリセット
+                        document.getElementById('tradeForm').reset();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('エラーが発生しました。注文を再確認してください。');
+                    });
+            });
+        });
+    </script>
+
+</body>
+</html>
+

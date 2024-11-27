@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trade</title>
+</head>
+<body>
+    <h1>Trade</h1>
+    <form id="buyForm" method="POST" action="/trade/buy">
+        <h2>Buy Order</h2>
+        <input type="text" name="user" placeholder="User">
+        <input type="text" name="amount" placeholder="Amount">
+        <input type="text" name="price" placeholder="Price">
+        <button type="submit">Submit Buy Order</button>
+    </form>
+    <form id="sellForm" method="POST" action="/trade/sell">
+        <h2>Sell Order</h2>
+        <input type="text" name="user" placeholder="User">
+        <input type="text" name="amount" placeholder="Amount">
+        <input type="text" name="price" placeholder="Price">
+        <button type="submit">Submit Sell Order</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Open Orders</title>
+</head>
+<body>
+    <h1>Open Orders</h1>
+    {{if .error}}
+        <p>Error: {{.error}}</p>
+    {{else}}
+        <table border="1">
+            <tr>
+                <th>User</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Price</th>
+            </tr>
+            {{range .orders}}
+            <tr>
+                <td>{{.User}}</td>
+                <td>{{.Type}}</td>
+                <td>{{.Amount}}</td>
+                <td>{{.Price}}</td>
+            </tr>
+            {{end}}
+        </table>
+    {{end}}
+</body>
+</html>

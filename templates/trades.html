@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trade History</title>
+</head>
+<body>
+    <h1>Trade History</h1>
+    {{if .error}}
+        <p>Error: {{.error}}</p>
+    {{else}}
+        <table border="1">
+            <tr>
+                <th>Buyer</th>
+                <th>Seller</th>
+                <th>Amount</th>
+                <th>Price</th>
+                <th>Date</th>
+            </tr>
+            {{range .trades}}
+            <tr>
+                <td>{{.Buyer}}</td>
+                <td>{{.Seller}}</td>
+                <td>{{.Amount}}</td>
+                <td>{{.Price}}</td>
+                <td>{{.CreatedAt | formatDate}}</td>
+            </tr>
+            {{end}}
+        </table>
+    {{end}}
+</body>
+</html>
