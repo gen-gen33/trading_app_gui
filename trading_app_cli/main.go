@@ -40,7 +40,7 @@ func main() {
 			var name string
 			var balance float64
 			fmt.Scan(&name, &balance)
-			db.CreateUser(name, balance)
+			db.CreateUser(name, "", balance)
 
 		case "login":
 			var name string

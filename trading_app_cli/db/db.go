@@ -43,10 +43,20 @@ func InitDB() {
 func SetupTables() {
 	// type: 'buy' or 'sell'
 	// status: 'open' or 'matched'
+	// `CREATE DATABASE IF NOT EXISTS` コマンド
+	query := "CREATE DATABASE IF NOT EXISTS trading;"
+	_, err11 := DB.Exec(query)
+	if err11 != nil {
+		log.Fatalf("Failed to execute query: %v", err11)
+	}
+
+	fmt.Println("Database created or already exists.")
+
 	queries := []string{
 		`CREATE TABLE IF NOT EXISTS users (
 			id SERIAL PRIMARY KEY,
 			name STRING UNIQUE NOT NULL,
+			password STRING NOT NULL,
 			balance DECIMAL NOT NULL
 		)`,
 		`CREATE TABLE IF NOT EXISTS orders (
@@ -79,8 +89,8 @@ func SetupTables() {
 	fmt.Println("Tables created successfully!")
 }
 
-func CreateUser(name string, balance float64) {
-	_, err := DB.Exec("INSERT INTO users (name, balance) VALUES ($1, $2)", name, balance)
+func CreateUser(name string, password string, balance float64) {
+	_, err := DB.Exec("INSERT INTO users (name, password, balance) VALUES ($1, $2, $3)", name, password, balance)
 	if err != nil {
 		fmt.Printf("Failed to create user: %v ", err)
 		return

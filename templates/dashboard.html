@@ -40,12 +40,31 @@
         <a href="#trades">トレード履歴</a>
     </div>
     <div class="content">
+    <!-- ヘッダーセクション -->
+    <header class="mb-4">
+        <h2>ようこそ、{{ .username }}さん</h2>
+        <button id="logoutButton" class="btn btn-danger">ログアウト</button>
+        <script>
+            document.getElementById('logoutButton').addEventListener('click', function () {
+                fetch('/logout', {
+                    method: 'POST',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message); // ログアウト成功メッセージ
+                    window.location.href = '/login'; // ログインページにリダイレクト
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        </script>
+    </header>
+
         <section id="trade">
             <h2>トレード</h2>
             <form id="tradeForm">
                 <div class="mb-3">
                     <label for="user" class="form-label">ユーザー名</label>
-                    <input type="text" class="form-control" id="user" name="user" required>
+                    <input type="text" class="form-control" id="user" name="user" readonly value="{{ .username }}">
                 </div>
                 <div class="mb-3">
                     <label for="amount" class="form-label">数量</label>
@@ -149,7 +168,7 @@
                 event.preventDefault();
                 const formData = new FormData(this);
                 const tradeData = {
-                    user: formData.get('user'),
+                    user: "{{ .username }}",
                     amount: parseFloat(formData.get('amount')),
                     price: parseFloat(formData.get('price')),
                     type: formData.get('type')
