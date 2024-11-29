@@ -17,6 +17,7 @@ import (
 func main() {
 	db.InitDB()
 	defer db.DB.Close()
+	db.SetupTables()
 
 	r := gin.Default()
 
