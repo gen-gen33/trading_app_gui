@@ -44,5 +44,5 @@ A web-based trading application that allows users to execute trades through an i
    go run main.go
    ```
 
-<!-- For a detailed explanation in Japanese, please refer to the following article:
-[CLI通貨取引アプリ作ってみた](https://zenn.dev/genn_tmm/articles/70a2d9025ebdb4) -->
+For a detailed explanation in Japanese, please refer to the following article:
+[(GUI)通貨取引アプリ作ってみた](https://zenn.dev/genn_tmm/articles/77f6cfe7b38433)
